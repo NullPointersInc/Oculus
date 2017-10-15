@@ -17,10 +17,17 @@
 
 import logging
 
+import os
+import sys
+import inspect
+currentdir = os.path.dirname(os.path.abspath(
+    inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0, parentdir)
+from protos import string_int_label_map_pb2
+
 import tensorflow as tf
 from google.protobuf import text_format
-from object_detection.protos import string_int_label_map_pb2
-
 
 def _validate_label_map(label_map):
   """Checks if a label map is valid.
