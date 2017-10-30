@@ -14,7 +14,8 @@ from PIL import Image
 import cv2
 
 # Capture Video using webcam
-cap = cv2.VideoCapture(0)
+stream_addr = 'http://192.168.0.100:8080/?action=stream'
+cap = cv2.VideoCapture(stream_addr)
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
