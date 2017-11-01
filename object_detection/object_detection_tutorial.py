@@ -73,7 +73,22 @@ with detection_graph.as_default():
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
-list_classname = []
+list_classname = {}
+
+def printClass(s):
+    leng = len(list_classname)
+    if s is not None:
+        i = s.index(':')
+        label = s[:i]
+        score = s[i + 2:len(s) - 1]
+        if label in list_classname:
+            if int(list_classname[label]) < int(score):
+                list_classname[label] = score
+        else:
+            list_classname[label] = score
+        if len(list_classname) > leng:
+            leng = len(list_classname)
+            print(s)
 
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
@@ -94,7 +109,7 @@ with detection_graph.as_default():
           [boxes, scores, classes, num_detections],
           feed_dict={image_tensor: image_np_expanded})
       # Visualization of the results of a detection.
-      list_classname.append(vis_util.visualize_boxes_and_labels_on_image_array(
+      printClass(vis_util.visualize_boxes_and_labels_on_image_array(
           image_np,
           np.squeeze(boxes),
           np.squeeze(classes).astype(np.int32),
