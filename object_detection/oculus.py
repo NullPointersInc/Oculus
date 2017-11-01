@@ -9,7 +9,7 @@ from collections import defaultdict
 from io import StringIO
 from matplotlib import pyplot as plt
 from PIL import Image
-
+import time
 import cv2
 
 # Capture Video using webcam
@@ -122,7 +122,8 @@ with detection_graph.as_default():
         cv2.destroyAllWindows()
         break
     
-speak_string = "Detected, "
+speak_string = ""
 for k in list_classname:
-    speak_string += (k + " probability is " + list_classname[k])
-os.system("say " + speak_string)
+    speak_string = ("Detected, " + k + " probability is " + list_classname[k])
+    os.system("say " + speak_string)
+    time.sleep(1)
