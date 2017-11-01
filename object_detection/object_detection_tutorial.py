@@ -14,7 +14,7 @@ from PIL import Image
 import cv2
 
 # Capture Video using webcam
-stream_addr = 'http://192.168.0.100:8080/?action=stream'
+stream_addr = 0
 cap = cv2.VideoCapture(stream_addr)
 
 # This is needed since the notebook is stored in the object_detection folder.
@@ -73,6 +73,7 @@ with detection_graph.as_default():
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
 categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
+list_classname = []
 
 with detection_graph.as_default():
   with tf.Session(graph=detection_graph) as sess:
@@ -93,16 +94,17 @@ with detection_graph.as_default():
           [boxes, scores, classes, num_detections],
           feed_dict={image_tensor: image_np_expanded})
       # Visualization of the results of a detection.
-      vis_util.visualize_boxes_and_labels_on_image_array(
+      list_classname.append(vis_util.visualize_boxes_and_labels_on_image_array(
           image_np,
           np.squeeze(boxes),
           np.squeeze(classes).astype(np.int32),
           np.squeeze(scores),
           category_index,
           use_normalized_coordinates=True,
-          line_thickness=8)
+          line_thickness=8))
 
       cv2.imshow('object detection', cv2.resize(image_np, (800,600)))
       if cv2.waitKey(25) & 0xFF == ord('q'):
+        print (set(list_classname))
         cv2.destroyAllWindows()
         break
