@@ -19,3 +19,7 @@ ignore/
 *.pyc
 object_detection/**/*.pyc
 object_detection/*.ipynb
+
+#Mac
+object_detection/pythonw
+.DS_STORE
