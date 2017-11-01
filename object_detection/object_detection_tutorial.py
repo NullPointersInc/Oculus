@@ -10,6 +10,7 @@ from collections import defaultdict
 from io import StringIO
 from matplotlib import pyplot as plt
 from PIL import Image
+import pyttsx3
 
 import cv2
 
@@ -120,6 +121,13 @@ with detection_graph.as_default():
 
       cv2.imshow('object detection', cv2.resize(image_np, (800,600)))
       if cv2.waitKey(25) & 0xFF == ord('q'):
-        print (set(list_classname))
         cv2.destroyAllWindows()
         break
+    
+speak_string = "Detected, "
+for k in list_classname:
+    speak_string += (k + " probability is " + list_classname[k])
+engine = pyttsx3.init()
+engine.say(speak_string)
+engine.setProperty('rate',80)
+engine.runAndWait()
