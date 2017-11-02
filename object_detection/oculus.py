@@ -13,8 +13,14 @@ import time
 import cv2
 
 # Capture Video using webcam
-stream_addr = 0
-cap = cv2.VideoCapture(stream_addr)
+stream_addr = "tcpclientsrc host=192.168.0.103 port=5000 ! gdpdepay ! rtph264depay ! video/x-h264, width=1280, height=720, format=YUY2, framerate=49/1 ! ffdec_h264 ! autoconvert ! appsink sync=false"
+# Net cat pipe
+pipe = "/dev/stdin"
+# cap = cv2.VideoCapture("tcpclientsrc host=192.168.0.103 port=5000  ! gdpdepay !  rtph264depay ! ffdec_h264 ! videoconvert ! video/x-raw, format=BGR ! appsink", cv2.CAP_GSTREAMER)
+#netcat
+#cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
+# Raspi motion, currently the best solution
+cap = cv2.VideoCapture("http://192.168.0.90:8081/")
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
