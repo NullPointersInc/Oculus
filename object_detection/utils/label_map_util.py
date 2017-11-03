@@ -17,17 +17,10 @@
 
 import logging
 
-import os
-import sys
-import inspect
-currentdir = os.path.dirname(os.path.abspath(
-    inspect.getfile(inspect.currentframe())))
-parentdir = os.path.dirname(currentdir)
-sys.path.insert(0, parentdir)
-from protos import string_int_label_map_pb2
-
 import tensorflow as tf
 from google.protobuf import text_format
+from object_detection.protos import string_int_label_map_pb2
+
 
 def _validate_label_map(label_map):
   """Checks if a label map is valid.
@@ -131,11 +124,12 @@ def load_labelmap(path):
   return label_map
 
 
-def get_label_map_dict(label_map_path):
+def get_label_map_dict(label_map_path, use_display_name=False):
   """Reads a label map and returns a dictionary of label names to id.
 
   Args:
     label_map_path: path to label_map.
+    use_display_name: whether to use the label map items' display names as keys.
 
   Returns:
     A dictionary mapping label names to id.
@@ -143,5 +137,30 @@ def get_label_map_dict(label_map_path):
   label_map = load_labelmap(label_map_path)
   label_map_dict = {}
   for item in label_map.item:
-    label_map_dict[item.name] = item.id
+    if use_display_name:
+      label_map_dict[item.display_name] = item.id
+    else:
+      label_map_dict[item.name] = item.id
   return label_map_dict
+
+
+def create_category_index_from_labelmap(label_map_path):
+  """Reads a label map and returns a category index.
+
+  Args:
+    label_map_path: Path to `StringIntLabelMap` proto text file.
+
+  Returns:
+    A category index, which is a dictionary that maps integer ids to dicts
+    containing categories, e.g.
+    {1: {'id': 1, 'name': 'dog'}, 2: {'id': 2, 'name': 'cat'}, ...}
+  """
+  label_map = load_labelmap(label_map_path)
+  max_num_classes = max(item.id for item in label_map.item)
+  categories = convert_label_map_to_categories(label_map, max_num_classes)
+  return create_category_index(categories)
+
+
+def create_class_agnostic_category_index():
+  """Creates a category index with a single `object` class."""
+  return {1: {'id': 1, 'name': 'object'}}

@@ -17,11 +17,11 @@ stream_addr = "tcpclientsrc host=192.168.0.103 port=5000 ! gdpdepay ! rtph264dep
 # Net cat pipe
 pipe = "/dev/stdin"
 # cap = cv2.VideoCapture("tcpclientsrc host=192.168.0.103 port=5000  ! gdpdepay !  rtph264depay ! ffdec_h264 ! videoconvert ! video/x-raw, format=BGR ! appsink", cv2.CAP_GSTREAMER)
-# netcat
-# cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
+#netcat
+#cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
 # Raspi motion, currently the best solution
 # cap = cv2.VideoCapture("http://192.168.0.5:8081/")
-# Webcam
+# webcam
 cap = cv2.VideoCapture(0)
 
 # This is needed since the notebook is stored in the object_detection folder.
