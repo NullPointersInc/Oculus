@@ -23,3 +23,6 @@ object_detection/*.ipynb
 #Mac
 object_detection/pythonw
 .DS_STORE
+
+#inference graphs
+object_detection/ssd_inception_v2_coco_11_06_2017/
