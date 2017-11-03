@@ -17,10 +17,12 @@ stream_addr = "tcpclientsrc host=192.168.0.103 port=5000 ! gdpdepay ! rtph264dep
 # Net cat pipe
 pipe = "/dev/stdin"
 # cap = cv2.VideoCapture("tcpclientsrc host=192.168.0.103 port=5000  ! gdpdepay !  rtph264depay ! ffdec_h264 ! videoconvert ! video/x-raw, format=BGR ! appsink", cv2.CAP_GSTREAMER)
-#netcat
-#cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
+# netcat
+# cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
 # Raspi motion, currently the best solution
-cap = cv2.VideoCapture("http://192.168.0.90:8081/")
+# cap = cv2.VideoCapture("http://192.168.0.5:8081/")
+# Webcam
+cap = cv2.VideoCapture(0)
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
@@ -127,7 +129,7 @@ with detection_graph.as_default():
       if cv2.waitKey(25) & 0xFF == ord('q'):
         cv2.destroyAllWindows()
         break
-    
+
 speak_string = ""
 for k in list_classname:
     speak_string = ("Detected, " + k + " probability is " + list_classname[k])
