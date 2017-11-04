@@ -20,9 +20,9 @@ pipe = "/dev/stdin"
 #netcat
 #cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
 # Raspi motion, currently the best solution
-# cap = cv2.VideoCapture("http://192.168.0.5:8081/")
+cap = cv2.VideoCapture("http://192.168.0.5:8081/")
 # webcam
-cap = cv2.VideoCapture(0)
+# cap = cv2.VideoCapture(0)
 
 # This is needed since the notebook is stored in the object_detection folder.
 sys.path.append("..")
