@@ -36,3 +36,6 @@ classify_person/bottlenecks/
 classify_person/data_set/
 classify_person/training_summaries/
 classify_person/retrain.py
+oculusenv/
+faster_rcnn_nas_coco_2018_01_28/
+faster_rcnn_resnet101_coco_2018_01_28
