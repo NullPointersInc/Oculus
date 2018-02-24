@@ -7,19 +7,21 @@ Flag list: --width - to set Width
 
 Press 'q' to exit
 '''
-import os
 import argparse
-
+import os
 from queue import Queue
 from threading import Thread
+
+import numpy as np
+
+import cv2
+import tensorflow as tf
 from utilities.app_utils import FPS, draw_boxes_and_labels
-os.sys.path.append("..")
 # from utils.app_utils import WebcamVideoStream  # for WebcamVideoStream
 from utils import label_map_util
 
-import numpy as np
-import cv2
-import tensorflow as tf
+os.sys.path.append("..")
+
 
 # to obtain curent working directory
 CWD_PATH = os.getcwd()
@@ -158,7 +160,7 @@ if __name__ == '__main__':
         ed_input_q.put(frame)
         ob_input_q.put(frame)
 
-        #ob_t = time.time()
+        # ob_t = time.time()
 
         if ed_output_q.empty():
             pass  # fill up Queue
