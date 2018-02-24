@@ -39,3 +39,7 @@ classify_person/retrain.py
 oculusenv/
 faster_rcnn_nas_coco_2018_01_28/
 faster_rcnn_resnet101_coco_2018_01_28
+classify_note/retrained_graph.pb
+classify_note/retrained_labels.txt
+classify_person/retrained_graph.pb
+classify_person/retrained_labels.txt
