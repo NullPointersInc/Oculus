@@ -26,6 +26,7 @@ object_detection/pythonw
 
 #inference graphs
 object_detection/ssd_inception_v2_coco_11_06_2017/
+object_detection/frozen_inference_graph.pb
 
 #Stuffs from training
 classify_note/bottlenecks/

@@ -11,3 +11,9 @@ wget -O retrained_labels.txt https://www.dropbox.com/s/6hks023tcws5hzd/retrained
 cd ..
 
 echo "retrained graph & labels for classifying person downloaded successfully"
+
+cd object_detection
+wget -O frozen_inference_graph.pb https://www.dropbox.com/s/glznbxe3c9inoqo/frozen_inference_graph.pb?dl=1
+cd ..
+
+echo "frozen inference graph for classifying object downloaded successfully"
