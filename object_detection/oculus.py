@@ -1,153 +1,203 @@
-import numpy as np
+'''  Python Script for Oculus
+
+Usage: python3 detection-multithread.py
+Flag list: --width - to set Width
+           --height - to set Height
+           --source - to set source of input
+
+Press 'q' to exit
+'''
 import os
-import six.moves.urllib as urllib
-import sys
-import tarfile
-import tensorflow as tf
-import zipfile
-from collections import defaultdict
-from io import StringIO
-from matplotlib import pyplot as plt
-from PIL import Image
-import time
+import argparse
 
-# opencv packages for better framerate
-from imutils.video import WebcamVideoStream
-from imutils.video import FPS
-import imutils
-import cv2
-
-
-# Capture Video using webcam
-stream_addr = "tcpclientsrc host=192.168.0.103 port=5000 ! gdpdepay ! rtph264depay ! video/x-h264, width=1280, height=720, format=YUY2, framerate=49/1 ! ffdec_h264 ! autoconvert ! appsink sync=false"
-# Net cat pipe
-pipe = "/dev/stdin"
-# cap = cv2.VideoCapture("tcpclientsrc host=192.168.0.103 port=5000  ! gdpdepay !  rtph264depay ! ffdec_h264 ! videoconvert ! video/x-raw, format=BGR ! appsink", cv2.CAP_GSTREAMER)
-# netcat
-# cap = cv2.VideoCapture("tcp://192.168.0.90:2222")
-# Raspi motion, currently the best solution
-# cap = cv2.VideoCapture("http://192.168.0.5:8081/")
-# webcam
-#cap = cv2.VideoCapture(0)
-cap = WebcamVideoStream(src=0).start()
-fps = FPS().start()
-
-# This is needed since the notebook is stored in the object_detection folder.
-sys.path.append("..")
-
-# Object detection imports
-# Here are the imports from the object detection module.
+from queue import Queue
+from threading import Thread
+from utilities.app_utils import FPS, draw_boxes_and_labels
+os.sys.path.append("..")
+# from utils.app_utils import WebcamVideoStream  # for WebcamVideoStream
 from utils import label_map_util
-from utils import visualization_utils as vis_util
 
+import numpy as np
+import cv2
+import tensorflow as tf
 
-# Model preparation
-# Variables
-#
-# Any model exported using the `export_inference_graph.py` tool can be loaded here simply by changing `PATH_TO_CKPT` to point to a new .pb file.
-#
-# By default we use an "SSD with Mobilenet" model here. See the [detection model zoo](https://github.com/tensorflow/models/blob/master/object_detection/g3doc/detection_model_zoo.md) for a list of other models that can be run out-of-the-box with varying speeds and accuracies.
-# What model to download.
-MODEL_NAME = 'ssd_inception_v2_coco_11_06_2017'
-MODEL_FILE = MODEL_NAME + '.tar.gz'
-DOWNLOAD_BASE = 'http://download.tensorflow.org/models/object_detection/'
+# to obtain curent working directory
+CWD_PATH = os.getcwd()
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
-PATH_TO_CKPT = MODEL_NAME + '/frozen_inference_graph.pb'
+MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
+PATH_TO_CKPT = os.path.join(
+    CWD_PATH, MODEL_NAME, 'frozen_inference_graph.pb')
 
 # List of the strings that is used to add correct label for each box.
-PATH_TO_LABELS = os.path.join('data', 'mscoco_label_map.pbtxt')
+PATH_TO_LABELS = os.path.join(
+    CWD_PATH, 'data', 'mscoco_label_map.pbtxt')
 
 NUM_CLASSES = 90
 
-# Download Model
-if not os.path.isfile(MODEL_FILE) and not os.path.isdir(MODEL_NAME):
-    opener = urllib.request.URLopener()
-    opener.retrieve(DOWNLOAD_BASE + MODEL_FILE, MODEL_FILE)
-    tar_file = tarfile.open(MODEL_FILE)
-    for file in tar_file.getmembers():
-        file_name = os.path.basename(file.name)
-        if 'frozen_inference_graph.pb' in file_name:
-            tar_file.extract(file, os.getcwd())
-
-
-# Load a (frozen) Tensorflow model into memory.
-detection_graph = tf.Graph()
-with detection_graph.as_default():
-    od_graph_def = tf.GraphDef()
-    with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
-        serialized_graph = fid.read()
-        od_graph_def.ParseFromString(serialized_graph)
-        tf.import_graph_def(od_graph_def, name='')
-
-
 # Loading label map
-# Label maps map indices to category names, so that when our convolution
-# network predicts `5`, we know that this corresponds to `airplane`.  Here
-# we use internal utility functions, but anything that returns a
-# dictionary mapping integers to appropriate string labels would be fine
 label_map = label_map_util.load_labelmap(PATH_TO_LABELS)
-categories = label_map_util.convert_label_map_to_categories(
-    label_map, max_num_classes=NUM_CLASSES, use_display_name=True)
+categories = label_map_util.convert_label_map_to_categories(label_map, max_num_classes=NUM_CLASSES,
+                                                            use_display_name=True)
 category_index = label_map_util.create_category_index(categories)
-list_classname = {}
 
 
-def printClass(s):
-    leng = len(list_classname)
-    if s is not None:
-        i = s.index(':')
-        label = s[:i]
-        score = s[i + 2:len(s) - 1]
-        if label in list_classname:
-            if int(list_classname[label]) < int(score):
-                list_classname[label] = score
+def argsparser():
+    ''' argsparser() adds argument functionality for command line. '''
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--source', dest='source', type=int,
+                        default=0, help='Device index of the camera.')
+    parser.add_argument('--width', dest='width', type=int,
+                        default=640, help='Width of the frames in the video stream.')
+    parser.add_argument('--height', dest='height', type=int,
+                        default=480, help='Height of the frames in the video stream.')
+    return parser.parse_args()
+
+
+def detect_objects(image_np, sess, detection_graph):
+    '''detect_objects is used to find objects in the frame and draw a box'''
+    # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
+    image_np_expanded = np.expand_dims(image_np, axis=0)
+    image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
+
+    # Each box represents a part of the image where a particular object was detected.
+    boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
+
+    # Each score represent how level of confidence for each of the objects.
+    # Score is shown on the result image, together with the class label.
+    scores = detection_graph.get_tensor_by_name('detection_scores:0')
+    classes = detection_graph.get_tensor_by_name('detection_classes:0')
+    num_detections = detection_graph.get_tensor_by_name('num_detections:0')
+
+    # Actual detection.
+    (boxes, scores, classes, num_detections) = sess.run(
+        [boxes, scores, classes, num_detections],
+        feed_dict={image_tensor: image_np_expanded})
+
+    # Visualization of the results of a detection.
+    rect_points, class_names, class_colors = draw_boxes_and_labels(
+        boxes=np.squeeze(boxes),
+        classes=np.squeeze(classes).astype(np.int32),
+        scores=np.squeeze(scores),
+        category_index=category_index,
+        min_score_thresh=.5
+    )
+    return dict(rect_points=rect_points, class_names=class_names, class_colors=class_colors)
+
+
+def detect(input_q, output_q):
+    '''Isolated function to enable threading of object detection'''
+    # Load a (frozen) Tensorflow model into memory.
+    detection_graph = tf.Graph()
+    with detection_graph.as_default():
+        od_graph_def = tf.GraphDef()
+        with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
+            serialized_graph = fid.read()
+            od_graph_def.ParseFromString(serialized_graph)
+            tf.import_graph_def(od_graph_def, name='')
+
+        sess = tf.Session(graph=detection_graph)
+
+    while True:
+        fram = input_q.get()
+        frame_rgb = cv2.cvtColor(fram, cv2.COLOR_BGR2RGB)
+        output_q.put(detect_objects(frame_rgb, sess, detection_graph))
+
+    sess.close()
+
+
+def edge(input_q, output_q):
+    '''Isolated function to enable threading of edge detection'''
+    while True:
+        image = input_q.get()
+        # load the image, convert it to grayscale, and blur it slightly
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+
+        # apply Canny edge detection using a wide threshold, tight
+        # threshold, and automatically determined threshold
+        wide = cv2.Canny(blurred, 10, 200)
+        output_q.put(wide)
+
+
+if __name__ == '__main__':
+    args = argsparser()
+
+    # Queueing is used to dramaticallty improve framerates
+    # Queue for Object Detection
+
+    # Queue for Edge Detection
+    ed_input_q = Queue(5)
+    # fps is better if queue is higher but then more lags
+    ed_output_q = Queue()
+    for i in range(1):
+        ed_t = Thread(target=edge, args=(ed_input_q, ed_output_q))
+        ed_t.daemon = True
+        ed_t.start()
+
+    ob_input_q = Queue(5)
+    # fps is better if queue is higher but then more lags
+    ob_output_q = Queue()
+    for i in range(1):
+        ob_t = Thread(target=detect, args=(ob_input_q, ob_output_q))
+        ob_t.daemon = True
+        ob_t.start()
+
+    # video_capture = WebcamVideoStream(src=args.video_source,
+    #                                  width=args.width,
+    #                                  height=args.height).start()
+
+    video_capture = cv2.VideoCapture(args.source)
+    fps = FPS().start()
+
+    while True:
+        ret, frame = video_capture.read()
+        frame = cv2.flip(frame, 1)  # to flip image on coorect orientation
+        frame = cv2.resize(frame, (args.width, args.height))
+        # print(type(frame))
+        ed_input_q.put(frame)
+        ob_input_q.put(frame)
+
+        #ob_t = time.time()
+
+        if ed_output_q.empty():
+            pass  # fill up Queue
         else:
-            list_classname[label] = score
-        if len(list_classname) > leng:
-            leng = len(list_classname)
-            print(s)
+            img = ed_output_q.get()
+            cv2.imshow('Edge', img)
 
-with detection_graph.as_default():
-    with tf.Session(graph=detection_graph) as sess:
-        while True:
-            image_np = cap.read()
-            # Expand dimensions since the model expects images to have shape: [1, None, None, 3]
-            image_np_expanded = np.expand_dims(image_np, axis=0)
-            image_tensor = detection_graph.get_tensor_by_name('image_tensor:0')
-            # Each box represents a part of the image where a particular object was detected.
-            boxes = detection_graph.get_tensor_by_name('detection_boxes:0')
-            # Each score represent how level of confidence for each of the objects.
-            # Score is shown on the result image, together with the class label.
-            scores = detection_graph.get_tensor_by_name('detection_scores:0')
-            classes = detection_graph.get_tensor_by_name('detection_classes:0')
-            num_detections = detection_graph.get_tensor_by_name('num_detections:0')
-            # Actual detection.
-            (boxes, scores, classes, num_detections) = sess.run(
-                [boxes, scores, classes, num_detections],
-                feed_dict={image_tensor: image_np_expanded})
-            # Visualization of the results of a detection.
-            printClass(vis_util.visualize_boxes_and_labels_on_image_array(
-                image_np,
-                np.squeeze(boxes),
-                np.squeeze(classes).astype(np.int32),
-                np.squeeze(scores),
-                category_index,
-                use_normalized_coordinates=True,
-                line_thickness=8))
+        if ob_output_q.empty():
+            pass  # fill up queue
+        else:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            data = ob_output_q.get()
+            rec_points = data['rect_points']
+            class_names = data['class_names']
+            class_colors = data['class_colors']
+            for point, name, color in zip(rec_points, class_names, class_colors):
+                cv2.rectangle(frame, (int(point['xmin'] * args.width),
+                                      int(point['ymin'] * args.height)),
+                              (int(point['xmax'] * args.width),
+                               int(point['ymax'] * args.height)), color, 3)
+                cv2.rectangle(frame, (int(point['xmin'] * args.width),
+                                      int(point['ymin'] * args.height)),
+                              (int(point['xmin'] * args.width) + len(name[0]) * 6,
+                               int(point['ymin'] * args.height) - 10), color, -1, cv2.LINE_AA)
+                cv2.putText(frame, name[0], (int(point['xmin'] * args.width),
+                                             int(point['ymin'] * args.height)),
+                            font, 0.3, (0, 0, 0), 1)
+            cv2.imshow('Object', frame)
 
-            cv2.imshow('object detection', imutils.resize(image_np, width=768))
-            fps.update()
-            if cv2.waitKey(25) & 0xFF == ord('q'):
-                fps.stop()
-                print("[INFO] elasped time: {:.2f}".format(fps.elapsed()))
-                print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
-                cv2.destroyAllWindows()
-                cap.stop()
-                break
+        fps.update()
 
-'''speak_string = ""
-for k in list_classname:
-    speak_string = ("Detected, " + k + " probability is " + list_classname[k])
-    os.system("say " + speak_string)
-    time.sleep(1)'''
+        # Exit if input key is 'q'
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
+    fps.stop()
+    print('[INFO] elapsed time (total): {:.2f}'.format(fps.elapsed()))
+    print('[INFO] approx. FPS: {:.2f}'.format(fps.fps()))
+
+    # video_capture.stop() # if using WebcamVideoStream
+    video_capture.release()  # if using cv2.VideoCapture(0)
+    cv2.destroyAllWindows()
