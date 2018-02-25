@@ -18,22 +18,22 @@ import cv2
 import tensorflow as tf
 from utilities.app_utils import FPS, draw_boxes_and_labels
 # from utils.app_utils import WebcamVideoStream  # for WebcamVideoStream
-from utils import label_map_util
+from object_detection.utils import label_map_util
 
-os.sys.path.append("..")
+# os.sys.path.append("..")
 
 
 # to obtain curent working directory
 CWD_PATH = os.getcwd()
 
 # Path to frozen detection graph. This is the actual model that is used for the object detection.
-MODEL_NAME = 'ssd_mobilenet_v1_coco_11_06_2017'
+MODEL_NAME = 'model_to_use'
 PATH_TO_CKPT = os.path.join(
-    CWD_PATH, 'frozen_inference_graph.pb')
+    CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_inference_graph.pb')
 
 # List of the strings that is used to add correct label for each box.
 PATH_TO_LABELS = os.path.join(
-    CWD_PATH, 'data', 'mscoco_label_map.pbtxt')
+    CWD_PATH, 'object_detection', 'data', 'mscoco_label_map.pbtxt')
 
 NUM_CLASSES = 90
 

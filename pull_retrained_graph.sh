@@ -12,8 +12,9 @@ cd ..
 
 echo "retrained graph & labels for classifying person downloaded successfully"
 
-cd object_detection
+cd object_detection/object_detection
+mkdir model_to_use && cd model_to_use
 wget -O frozen_inference_graph.pb https://www.dropbox.com/s/glznbxe3c9inoqo/frozen_inference_graph.pb?dl=1
-cd ..
+cd ../../..
 
 echo "frozen inference graph for classifying object downloaded successfully"
