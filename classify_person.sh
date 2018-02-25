@@ -1,2 +1,2 @@
-cd classify-person
-python3 classify.py image.jpg
+cd classify_person
+python3 classify.py

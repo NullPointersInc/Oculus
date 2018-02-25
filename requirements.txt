@@ -1,7 +1,10 @@
 absl-py==0.1.10
 astor==0.6.2
 bleach==1.5.0
+Click>=6.0
 cycler==0.10.0
+dlib>=19.3.0
+face_recognition_models
 gast==0.2.0
 grpcio==1.9.1
 html5lib==0.9999999
@@ -14,8 +17,9 @@ protobuf==3.5.1
 pyparsing==2.2.0
 python-dateutil==2.6.1
 pytz==2018.3
+scipy>=0.17.0
 six==1.11.0
-tensorflow==1.6.0rc0
+tensorflow>=1.5.0
 tensorflow-tensorboard==1.5.1
 termcolor==1.1.0
 Werkzeug==0.14.1
