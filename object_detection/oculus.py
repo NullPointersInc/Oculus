@@ -129,13 +129,13 @@ if __name__ == '__main__':
     # Queue for Object Detection
 
     # Queue for Edge Detection
-    ed_input_q = Queue(5)
-    # fps is better if queue is higher but then more lags
-    ed_output_q = Queue()
-    for i in range(1):
-        ed_t = Thread(target=edge, args=(ed_input_q, ed_output_q))
-        ed_t.daemon = True
-        ed_t.start()
+    # ed_input_q = Queue(5)
+    # # fps is better if queue is higher but then more lags
+    # ed_output_q = Queue()
+    # for i in range(1):
+    #     ed_t = Thread(target=edge, args=(ed_input_q, ed_output_q))
+    #     ed_t.daemon = True
+    #     ed_t.start()
 
     ob_input_q = Queue(5)
     # fps is better if queue is higher but then more lags
@@ -157,16 +157,16 @@ if __name__ == '__main__':
         frame = cv2.flip(frame, 1)  # to flip image on coorect orientation
         frame = cv2.resize(frame, (args.width, args.height))
         # print(type(frame))
-        ed_input_q.put(frame)
+        # ed_input_q.put(frame)
         ob_input_q.put(frame)
 
         # ob_t = time.time()
 
-        if ed_output_q.empty():
-            pass  # fill up Queue
-        else:
-            img = ed_output_q.get()
-            cv2.imshow('Edge', img)
+        # if ed_output_q.empty():
+        #     pass  # fill up Queue
+        # else:
+        #     img = ed_output_q.get()
+        #     cv2.imshow('Edge', img)
 
         if ob_output_q.empty():
             pass  # fill up queue
@@ -183,8 +183,10 @@ if __name__ == '__main__':
                                int(point['ymax'] * args.height)), color, 3)
                 cv2.rectangle(frame, (int(point['xmin'] * args.width),
                                       int(point['ymin'] * args.height)),
-                              (int(point['xmin'] * args.width) + len(name[0]) * 6,
-                               int(point['ymin'] * args.height) - 10), color, -1, cv2.LINE_AA)
+                              (int(point['xmin'] * args.width) +
+                               len(name[0]) * 6,
+                               int(point['ymin'] * args.height) - 10),
+                              color, -1, cv2.LINE_AA)
                 cv2.putText(frame, name[0], (int(point['xmin'] * args.width),
                                              int(point['ymin'] * args.height)),
                             font, 0.3, (0, 0, 0), 1)
