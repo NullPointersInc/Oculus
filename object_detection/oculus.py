@@ -137,7 +137,7 @@ if __name__ == '__main__':
     #     ed_t.daemon = True
     #     ed_t.start()
 
-    ob_input_q = Queue(5)
+    ob_input_q = Queue(1)
     # fps is better if queue is higher but then more lags
     ob_output_q = Queue()
     for i in range(1):
@@ -149,7 +149,7 @@ if __name__ == '__main__':
     #                                  width=args.width,
     #                                  height=args.height).start()
 
-    video_capture = cv2.VideoCapture(args.source)
+    video_capture = cv2.VideoCapture("http://192.168.0.103:8081/")
     fps = FPS().start()
 
     while True:

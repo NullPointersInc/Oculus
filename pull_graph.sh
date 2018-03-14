@@ -14,6 +14,14 @@ if [ "$1" = "-n" ]; then
 		cd ..
 		echo "retrained graph & labels for classifying note downloaded successfully"
 
+elif [ "$1" = "-p" ]; then
+		# From Oculus/
+		cd classify_person
+		wget -O retrained_graph.pb https://www.dropbox.com/s/xcfgw7qb42npwld/retrained_graph.pb?dl=1
+		wget -O retrained_labels.txt https://www.dropbox.com/s/6hks023tcws5hzd/retrained_labels.txt?dl=1
+		cd ..
+		echo "retrained graph & labels for classifying person downloaded successfully"
+
 elif [ "$1" = "-o" ]; then
 		# From Oculus/
 		cd object_detection/object_detection
@@ -33,6 +41,12 @@ elif [ "$1" = "-a" ]; then
 		cd ..
 		echo "retrained graph & labels for classifying note downloaded successfully"
 
+		cd classify_person
+		wget -O retrained_graph.pb https://www.dropbox.com/s/xcfgw7qb42npwld/retrained_graph.pb?dl=1
+		wget -O retrained_labels.txt https://www.dropbox.com/s/6hks023tcws5hzd/retrained_labels.txt?dl=1
+		cd ..
+		echo "retrained graph & labels for classifying person downloaded successfully"
+
 		cd object_detection/object_detection
 		if [ -d "model_to_use" ]; then
   			rm -rf model_to_use
@@ -46,8 +60,9 @@ elif [ "$1" = "-h" ]; then
 		echo "Usage: sh pull_graph.sh option"
 		echo "options:"
 		echo "-o : pull inference graph for object recognition"
+		echo "-p : pull inference graph for facial recognition"
 		echo "-n : pull retrained graph and labels for note recognition"
-		echo "-a : pull both the graphs"
+		echo "-a : pull all the graphs"
 		echo "-h : help"
 		echo ""
 		echo "Example:"

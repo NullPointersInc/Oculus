@@ -15,7 +15,7 @@ if [ "$1" = "-o" ]; then
 elif [ "$1" = "-p" ]; then
 		# From Oculus/
 		cd classify_person
-		python3 classify.py
+		python3 classify.py image.jpg
 		cd ..
 
 elif [ "$1" = "-n" ]; then
