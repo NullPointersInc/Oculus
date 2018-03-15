@@ -194,6 +194,7 @@ if __name__ == '__main__':
                             font, 0.3, (0, 0, 0), 1)
                 if name[0][:name[0].index(':')] not in detections:
                     detections.append(name[0][:name[0].index(':')])
+                    print(name[0][:name[0].index(':')])
             cv2.imshow('Object', frame)
 
         fps.update()
@@ -205,7 +206,6 @@ if __name__ == '__main__':
     fps.stop()
     print('[INFO] elapsed time (total): {:.2f}'.format(fps.elapsed()))
     print('[INFO] approx. FPS: {:.2f}'.format(fps.fps()))
-    print(detections)
 
     # video_capture.stop() # if using WebcamVideoStream
     video_capture.release()  # if using cv2.VideoCapture(0)
