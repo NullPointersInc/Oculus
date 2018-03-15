@@ -26,7 +26,8 @@ from object_detection.utils import label_map_util
 # to obtain curent working directory
 CWD_PATH = os.getcwd()
 
-# Path to frozen detection graph. This is the actual model that is used for the object detection.
+# Path to frozen detection graph. This is the actual model that is used for the
+# object detection.
 MODEL_NAME = 'model_to_use'
 PATH_TO_CKPT = os.path.join(
     CWD_PATH, 'object_detection', MODEL_NAME, 'frozen_inference_graph.pb')
@@ -146,12 +147,13 @@ if __name__ == '__main__':
         ob_t.start()
 
     # video_capture = WebcamVideoStream(src=args.video_source,
-    #                                  width=args.width,
-    #                                  height=args.height).start()
+    #                                   width=args.width,
+    #                                   height=args.height).start()
 
-    video_capture = cv2.VideoCapture("http://192.168.0.103:8081/")
+    # video_capture = cv2.VideoCapture("http://192.168.0.103:8081/")
+    video_capture = cv2.VideoCapture(0)
     fps = FPS().start()
-
+    detections = []
     while True:
         ret, frame = video_capture.read()
         frame = cv2.flip(frame, 1)  # to flip image on coorect orientation
@@ -190,6 +192,8 @@ if __name__ == '__main__':
                 cv2.putText(frame, name[0], (int(point['xmin'] * args.width),
                                              int(point['ymin'] * args.height)),
                             font, 0.3, (0, 0, 0), 1)
+                if name[0][:name[0].index(':')] not in detections:
+                    detections.append(name[0][:name[0].index(':')])
             cv2.imshow('Object', frame)
 
         fps.update()
@@ -201,6 +205,7 @@ if __name__ == '__main__':
     fps.stop()
     print('[INFO] elapsed time (total): {:.2f}'.format(fps.elapsed()))
     print('[INFO] approx. FPS: {:.2f}'.format(fps.fps()))
+    print(detections)
 
     # video_capture.stop() # if using WebcamVideoStream
     video_capture.release()  # if using cv2.VideoCapture(0)
