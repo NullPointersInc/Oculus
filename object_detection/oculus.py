@@ -11,6 +11,7 @@ import argparse
 import os
 from queue import Queue
 from threading import Thread
+from google_speech import Speech
 
 import numpy as np
 
@@ -22,7 +23,7 @@ from object_detection.utils import label_map_util
 
 # os.sys.path.append("..")
 
-
+lang = "en"
 # to obtain curent working directory
 CWD_PATH = os.getcwd()
 
@@ -195,6 +196,9 @@ if __name__ == '__main__':
                 if name[0][:name[0].index(':')] not in detections:
                     detections.append(name[0][:name[0].index(':')])
                     print(name[0][:name[0].index(':')])
+                    speech = Speech(name[0][:name[0].index(':')], lang)
+                    sox_effects = ("speed", "1")
+                    speech.play(sox_effects)
             cv2.imshow('Object', frame)
 
         fps.update()
