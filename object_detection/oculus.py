@@ -20,6 +20,8 @@ import tensorflow as tf
 from utilities.app_utils import FPS, draw_boxes_and_labels
 # from utils.app_utils import WebcamVideoStream  # for WebcamVideoStream
 from object_detection.utils import label_map_util
+from ..classify_person import classify
+
 
 # os.sys.path.append("..")
 
@@ -193,6 +195,10 @@ if __name__ == '__main__':
                 cv2.putText(frame, name[0], (int(point['xmin'] * args.width),
                                              int(point['ymin'] * args.height)),
                             font, 0.3, (0, 0, 0), 1)
+                # If person, tell who it is...
+                if name[0][:name[0].index(':')] == "person":
+                    classify(frame)
+
                 if name[0][:name[0].index(':')] not in detections:
                     detections.append(name[0][:name[0].index(':')])
                     print(name[0][:name[0].index(':')])
