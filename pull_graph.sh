@@ -86,6 +86,7 @@ elif [ "$1" = "-h" ]; then
 		echo "-o : pull inference graph for object recognition"
 		echo "-p : pull inference graph for facial recognition"
 		echo "-n : pull retrained graph and labels for note recognition"
+		echo "-l : pull checkpoints for labelling image"
 		echo "-a : pull all the graphs"
 		echo "-h : help"
 		echo ""
