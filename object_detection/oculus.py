@@ -20,7 +20,7 @@ import tensorflow as tf
 from utilities.app_utils import FPS, draw_boxes_and_labels
 # from utils.app_utils import WebcamVideoStream  # for WebcamVideoStream
 from object_detection.utils import label_map_util
-from ..classify_person import classify
+from classify_person import classify
 
 
 # os.sys.path.append("..")
