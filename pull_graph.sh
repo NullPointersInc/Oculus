@@ -33,6 +33,19 @@ elif [ "$1" = "-o" ]; then
 		cd ../../..
 		echo "frozen inference graph for classifying object downloaded successfully"
 
+elif [ "$1" = "-l" ]; then
+		# From Oculus/
+		cd im2txt
+		mkdir model/train && cd model/train
+		wget -O checkpoint https://www.dropbox.com/s/zcjrgxkyevwb7ak/checkpoint?dl=1
+		wget -O graph.pbtxt https://www.dropbox.com/s/pem4ivpsxw8zlbr/graph.pbtxt?dl=1
+		wget -O model.ckpt-2000000.data-00000-of-00001 https://www.dropbox.com/s/lar5zyhh6otd47l/model.ckpt-2000000.data-00000-of-00001?dl=1
+		wget -O model.ckpt-2000000.index https://www.dropbox.com/s/nrk6vmtm5crw8p4/model.ckpt-2000000.index?dl=1
+		wget -O model.ckpt-2000000.meta https://www.dropbox.com/s/gt31hnfivnw8ak4/model.ckpt-2000000.meta?dl=1
+		wget -O word_counts.txt https://www.dropbox.com/s/fcsd0bg5o620fit/word_counts.txt?dl=1
+		cd ../../..
+		echo "retrained graph & labels for labelling image downloaded successfully"
+
 elif [ "$1" = "-a" ]; then
 		# From Oculus/
 		cd classify_note
@@ -55,6 +68,17 @@ elif [ "$1" = "-a" ]; then
 		wget -O frozen_inference_graph.pb https://www.dropbox.com/s/glznbxe3c9inoqo/frozen_inference_graph.pb?dl=1
 		cd ../../..
 		echo "frozen inference graph for classifying object downloaded successfully"
+
+		cd im2txt
+		mkdir model/train && cd model/train
+		wget -O checkpoint https://www.dropbox.com/s/zcjrgxkyevwb7ak/checkpoint?dl=1
+		wget -O graph.pbtxt https://www.dropbox.com/s/pem4ivpsxw8zlbr/graph.pbtxt?dl=1
+		wget -O model.ckpt-2000000.data-00000-of-00001 https://www.dropbox.com/s/lar5zyhh6otd47l/model.ckpt-2000000.data-00000-of-00001?dl=1
+		wget -O model.ckpt-2000000.index https://www.dropbox.com/s/nrk6vmtm5crw8p4/model.ckpt-2000000.index?dl=1
+		wget -O model.ckpt-2000000.meta https://www.dropbox.com/s/gt31hnfivnw8ak4/model.ckpt-2000000.meta?dl=1
+		wget -O word_counts.txt https://www.dropbox.com/s/fcsd0bg5o620fit/word_counts.txt?dl=1
+		cd ../../..
+		echo "retrained graph & labels for labelling image downloaded successfully"
 
 elif [ "$1" = "-h" ]; then
 		echo "Usage: sh pull_graph.sh option"
