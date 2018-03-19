@@ -24,12 +24,17 @@ elif [ "$1" = "-n" ]; then
 		python3 classify.py image.jpg
 		cd ..
 
+elif [ "$1" = "-l" ]; then
+		# From Oculus/
+		sh run.sh
+
 elif [ "$1" = "-h" ]; then
 		echo "Usage: sh run_detection.sh option"
 		echo "options:"
 		echo "-o : run object recognition"
 		echo "-p : run face recognition"
 		echo "-n : run note recognition"
+		echo "-l : run image labelling"
 		echo "-h : help"
 		echo ""
 		echo "Example:"
