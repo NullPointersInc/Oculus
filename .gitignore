@@ -47,3 +47,6 @@ classify_person/retrained_labels.txt
 
 bazel*
 im2txt/model
+
+# Ingnore the text file
+output.txt
