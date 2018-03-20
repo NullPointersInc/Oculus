@@ -2,6 +2,7 @@
 # Requires PyAudio and PySpeech.
 
 import speech_recognition as sr
+from google_speech import Speech
 
 # Record Audio
 r = sr.Recognizer()
@@ -15,7 +16,12 @@ try:
     # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH
     # _RECOGNITION_API_KEY")`
     # instead of `r.recognize_google(audio)`
-    print("You said: " + r.recognize_google(audio))
+    speak = r.recognize_google(audio)
+    print("You said: " + speak)
+    speech = Speech(speak, lang="en")
+    sox_effects = ("speed", "1")
+    speech.play(sox_effects)
+
 except sr.UnknownValueError:
     print("Google Speech Recognition could not understand audio")
 except sr.RequestError as e:
