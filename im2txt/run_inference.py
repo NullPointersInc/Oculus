@@ -28,7 +28,7 @@ from im2txt import configuration
 from im2txt import inference_wrapper
 from im2txt.inference_utils import caption_generator
 from im2txt.inference_utils import vocabulary
-
+PATH = "../output.txt"
 FLAGS = tf.flags.FLAGS
 
 tf.flags.DEFINE_string("checkpoint_path", "",
@@ -91,8 +91,10 @@ def main(_):
                     speak_string += "Or maybe, " + sentence + "\n"
                 print("  %d) %s (p=%f)" % (i, sentence,
                                            math.exp(caption.logprob)))
-                output_file = open("../output.txt", mode='w')
-                output_file.write(speak_string)
+        os.system("rm ../output.txt")
+        output_file = open(PATH, "w")
+        output_file.write(speak_string)
+        output_file.close()
 
 
 if __name__ == "__main__":

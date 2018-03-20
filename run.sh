@@ -9,7 +9,7 @@ CHECKPOINT_PATH="im2txt/model/model.ckpt-2000000"
 VOCAB_FILE="im2txt/model/word_counts.txt"
 
 # JPEG image file to caption.
-IMAGE_FILE="im2txt/data/image1.jpg"
+IMAGE_FILE="im2txt/data/image2.jpg"
 
 # Build the inference binary.
 bazel build -c opt //im2txt:run_inference
@@ -23,4 +23,7 @@ bazel-bin/im2txt/run_inference \
   --checkpoint_path=${CHECKPOINT_PATH} \
   --vocab_file=${VOCAB_FILE} \
   --input_files=${IMAGE_FILE} > output.txt
-python3 talk.py 
+echo "Output goes below:"
+cat output.txt
+python3 talk.py < output.txt
+rm output.txt
