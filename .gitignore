@@ -50,3 +50,8 @@ im2txt/model
 
 # Ingnore the text file
 output.txt
+
+classify_note/image.jpg
+classify_person/image.jpg
+OCR/image.img
+im2txt/data/image.jpg

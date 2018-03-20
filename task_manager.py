@@ -21,6 +21,7 @@ def on_connect(client, userdata, flags, rc):
 def on_message(client, userdata, message):
     """Perform operations when message is received."""
     op = str(message.payload.decode("utf-8"))
+    print(op)
     if op == 'object':
         os.system("sh run_detection.sh -o")
     elif op == 'currency':
@@ -49,8 +50,7 @@ def on_message(client, userdata, message):
              scp pi@192.168.0.9:~/image/image.jpg ./OCR")
         os.system("sh OCR/ocr.py --image image.jpg")
     else:
-        pass
-
+        print("Chuth")
 
 def get_args_values(args=None):
     """Method to handle command line arguments."""
@@ -95,6 +95,9 @@ client.on_message = on_message  # attach function to callback
 print("Connecting to broker")
 client.connect(broker_address, port=port)  # connect to broker
 
+client.loop_start()
+
+
 while Connected is not True:  # Wait for connection
     time.sleep(0.1)
 
@@ -103,7 +106,7 @@ client.subscribe("Oculus")
 
 try:
     while True:
-        time.sleep(1)
+        time.sleep(0.1)
 except (KeyboardInterrupt, SystemExit):
     print()
     print("Exiting..")
