@@ -22,4 +22,5 @@ export CUDA_VISIBLE_DEVICES=""
 bazel-bin/im2txt/run_inference \
   --checkpoint_path=${CHECKPOINT_PATH} \
   --vocab_file=${VOCAB_FILE} \
-  --input_files=${IMAGE_FILE}
+  --input_files=${IMAGE_FILE} > output.txt
+python3 talk.py 

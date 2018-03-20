@@ -28,7 +28,6 @@ from im2txt import configuration
 from im2txt import inference_wrapper
 from im2txt.inference_utils import caption_generator
 from im2txt.inference_utils import vocabulary
-from google_speech import Speech
 
 FLAGS = tf.flags.FLAGS
 
@@ -73,7 +72,7 @@ def main(_):
         # available beam search parameters.
         generator = caption_generator.CaptionGenerator(model, vocab)
 
-    speak_string = ["It looks like the situation is one of the following: "]
+    speak_string = "It looks like the situation is one of the following: \n"
     for filename in filenames:
         with tf.gfile.GFile(filename, "rb") as f:
             image = f.read()
@@ -84,17 +83,14 @@ def main(_):
             sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
             sentence = " ".join(sentence)
             if i == 0:
-                speak_string.append("Either, " + sentence)
+                speak_string += "Either, " + sentence + "\n"
             elif i == 1:
-                speak_string.append("Or, " + sentence)
+                speak_string += "Or, " + sentence + "\n"
             elif i == 2:
-                speak_string.append("Or maybe, " + sentence)
+                speak_string += "Or maybe, " + sentence + "\n"
             print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
-
-    for speak_line in speak_string:
-        speech = Speech(speak_line, lang="en")
-        sox_effects = ("speed", "1")
-        speech.play(sox_effects)
+            output_file = open("../output.txt", mode='w')
+            output_file.write(speak_string)
 
 
 if __name__ == "__main__":
