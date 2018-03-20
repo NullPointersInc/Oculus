@@ -21,6 +21,10 @@ from utilities.app_utils import FPS, draw_boxes_and_labels
 # from utils.app_utils import WebcamVideoStream  # for WebcamVideoStream
 from object_detection.utils import label_map_util
 
+from scipy import ndimage
+import imutils
+
+
 # os.sys.path.append("..")
 
 lang = "en"
@@ -151,13 +155,18 @@ if __name__ == '__main__':
     #                                   width=args.width,
     #                                   height=args.height).start()
 
-    # video_capture = cv2.VideoCapture("http://192.168.0.103:8081/")
-    video_capture = cv2.VideoCapture(0)
+    video_capture = cv2.VideoCapture("http://192.168.0.9:8081/")
+    # video_capture = cv2.VideoCapture(0)
     fps = FPS().start()
     detections = []
     while True:
         ret, frame = video_capture.read()
+        frame = imutils.rotate(frame, angle=270)
+        # frame = cv2.flip(frame, -1)  # to flip image on coorect orientation
+        # frame = cv2.flip(frame, 0)  # to flip image on coorect orientation
         frame = cv2.flip(frame, 1)  # to flip image on coorect orientation
+
+
         frame = cv2.resize(frame, (args.width, args.height))
         # print(type(frame))
         # ed_input_q.put(frame)

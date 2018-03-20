@@ -1,6 +1,8 @@
 import math
 import os
 import sys
+import cv2
+import imutils
 
 import tensorflow as tf
 
@@ -8,6 +10,13 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # change this as you see fit
 image_path = sys.argv[1]
+
+image = cv2.imread(image_path)
+image = imutils.rotate(image, 270)
+cv2.imwrite('image.jpg', image)
+# change this as you see fit
+
+image_path = "image.jpg"
 
 # Read in the image_data
 image_data = tf.gfile.FastGFile(image_path, 'rb').read()

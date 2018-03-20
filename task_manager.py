@@ -40,7 +40,7 @@ def on_message(client, userdata, message):
         time.sleep(3)
         os.system(
             "sshpass -p 'bella12345' \
-             scp pi@192.168.0.9:~/image/image.jpg ./im2text/data")
+             scp pi@192.168.0.9:~/image/image.jpg ./im2txt/data")
         os.system("sh run_detection.sh -l")
 
     elif op == 'ocr':
