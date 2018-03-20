@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 # ==============================================================================
-r"""Generate captions for images using default beam search parameters."""
+"""Generate captions for images using default beam search parameters."""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -72,25 +72,27 @@ def main(_):
         # available beam search parameters.
         generator = caption_generator.CaptionGenerator(model, vocab)
 
-    speak_string = "It looks like the situation is one of the following: \n"
-    for filename in filenames:
-        with tf.gfile.GFile(filename, "rb") as f:
-            image = f.read()
-        captions = generator.beam_search(sess, image)
-        print("Captions for image %s:" % os.path.basename(filename))
-        for i, caption in enumerate(captions):
-            # Ignore begin and end words.
-            sentence = [vocab.id_to_word(w) for w in caption.sentence[1:-1]]
-            sentence = " ".join(sentence)
-            if i == 0:
-                speak_string += "Either, " + sentence + "\n"
-            elif i == 1:
-                speak_string += "Or, " + sentence + "\n"
-            elif i == 2:
-                speak_string += "Or maybe, " + sentence + "\n"
-            print("  %d) %s (p=%f)" % (i, sentence, math.exp(caption.logprob)))
-            output_file = open("../output.txt", mode='w')
-            output_file.write(speak_string)
+        speak_string = "It looks like the situation is one of the following:\n"
+        for filename in filenames:
+            with tf.gfile.GFile(filename, "rb") as f:
+                image = f.read()
+            captions = generator.beam_search(sess, image)
+            print("Captions for image %s:" % os.path.basename(filename))
+            for i, caption in enumerate(captions):
+                # Ignore begin and end words.
+                sentence = [vocab.id_to_word(w)
+                            for w in caption.sentence[1:-1]]
+                sentence = " ".join(sentence)
+                if i == 0:
+                    speak_string += "Either, " + sentence + "\n"
+                elif i == 1:
+                    speak_string += "Or, " + sentence + "\n"
+                elif i == 2:
+                    speak_string += "Or maybe, " + sentence + "\n"
+                print("  %d) %s (p=%f)" % (i, sentence,
+                                           math.exp(caption.logprob)))
+                output_file = open("../output.txt", mode='w')
+                output_file.write(speak_string)
 
 
 if __name__ == "__main__":
