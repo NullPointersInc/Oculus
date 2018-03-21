@@ -12,7 +12,7 @@ cd im2txt/data
 python3 rotate.py
 cd ../..
 # JPEG image file to caption.
-IMAGE_FILE="im2txt/data/image.jpg"
+IMAGE_FILE="im2txt/data/image2.jpg"
 
 # Build the inference binary.
 bazel build -c opt //im2txt:run_inference

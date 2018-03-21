@@ -94,4 +94,3 @@ os.system(cmd)
 cv2.imshow("Image", image)
 cv2.imshow("Output", gray)
 cv2.waitKey(0)
-

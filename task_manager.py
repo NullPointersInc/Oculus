@@ -25,32 +25,28 @@ def on_message(client, userdata, message):
     if op == 'object':
         os.system("sh run_detection.sh -o")
     elif op == 'currency':
-        time.sleep(3)
         os.system(
             "sshpass -p 'bella12345' \
              scp pi@192.168.0.9:~/image/image.jpg ./classify_note/")
         os.system("sh run_detection.sh -n")
     elif op == 'face':
-        time.sleep(3)
         os.system(
             "sshpass -p 'bella12345' scp pi@192.168.0.9:~/image/image.jpg .")
         os.system("mv image.jpg classify_person/")
         os.system("sh run_detection.sh -p")
     elif op == 'prediction':
-        time.sleep(3)
         os.system(
             "sshpass -p 'bella12345' \
              scp pi@192.168.0.9:~/image/image.jpg ./im2txt/data")
         os.system("sh run_detection.sh -l")
-
     elif op == 'ocr':
-        time.sleep(3)
         os.system(
             "sshpass -p 'bella12345' \
              scp pi@192.168.0.9:~/image/image.jpg ./OCR")
-        os.system("sh OCR/ocr.py --image image.jpg")
+        os.system("python3 OCR/ocr.py --image image.jpg")
     else:
-        print("Chuth")
+        print("Pass")
+
 
 def get_args_values(args=None):
     """Method to handle command line arguments."""

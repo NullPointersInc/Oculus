@@ -166,7 +166,6 @@ if __name__ == '__main__':
         # frame = cv2.flip(frame, 0)  # to flip image on coorect orientation
         frame = cv2.flip(frame, 1)  # to flip image on coorect orientation
 
-
         frame = cv2.resize(frame, (args.width, args.height))
         # print(type(frame))
         # ed_input_q.put(frame)

@@ -9,9 +9,7 @@ def sp(speak):
 
 
 def process(source):
-    print("Source: " + source)
     pos = source.rindex('(')
-    print(str(source[: pos]))
     sp(str(source[: pos]))
 
 

@@ -1,22 +1,22 @@
 import math
 import os
 import sys
-import cv2
 import imutils
-
+import cv2
+from google_speech import Speech
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# change this as you see fit
 image_path = sys.argv[1]
 
-image = cv2.imread(image_path)
-image = imutils.rotate(image, 270)
-cv2.imwrite('image.jpg', image)
-# change this as you see fit
+# image = cv2.imread(image_path)
+# image = imutils.rotate(image, 270)
+# cv2.imwrite('image.jpg', image)
+# # change this as you see fit
+#
+# image_path = "image.jpg"
 
-image_path = "image.jpg"
 
 # Read in the image_data
 image_data = tf.gfile.FastGFile(image_path, 'rb').read()
@@ -41,7 +41,7 @@ with tf.Session() as sess:
     # Sort to show labels of first prediction in order of confidence
     top_k = predictions[0].argsort()[-len(predictions[0]):][::-1]
 
-    speak_string = "Detected note, Rupees, "
+    speak_string = "This looks like Rupees "
     # Display the predicted result
     for node_id in top_k[0:1]:
         human_string = label_lines[node_id]
@@ -51,4 +51,7 @@ with tf.Session() as sess:
         format_score = math.ceil(format_score * 100) / 100
         speak_string = speak_string + str(format_score)
         print('%s (score = %.5f)' % (human_string, format_score))
-        os.system("say " + speak_string)
+        # os.system("google_speech -l en " + speak_string)
+        speech = Speech(speak_string, lang="en")
+        sox_effects = ("speed", "1")
+        speech.play(sox_effects)
