@@ -105,27 +105,28 @@ def detect(input_q, output_q):
             tf.import_graph_def(od_graph_def, name='')
 
         sess = tf.Session(graph=detection_graph)
-
+    fps = FPS().start()
     while True:
         fram = input_q.get()
         frame_rgb = cv2.cvtColor(fram, cv2.COLOR_BGR2RGB)
         output_q.put(detect_objects(frame_rgb, sess, detection_graph))
 
+    fps.stop()
     sess.close()
 
 
-def edge(input_q, output_q):
-    '''Isolated function to enable threading of edge detection'''
-    while True:
-        image = input_q.get()
-        # load the image, convert it to grayscale, and blur it slightly
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-
-        # apply Canny edge detection using a wide threshold, tight
-        # threshold, and automatically determined threshold
-        wide = cv2.Canny(blurred, 10, 200)
-        output_q.put(wide)
+# def edge(input_q, output_q):
+#     """Isolated function to enable threading of edge detection."""
+#     while True:
+#         image = input_q.get()
+#         # load the image, convert it to grayscale, and blur it slightly
+#         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#         blurred = cv2.GaussianBlur(gray, (3, 3), 0)
+#
+#         # apply Canny edge detection using a wide threshold, tight
+#         # threshold, and automatically determined threshold
+#         wide = cv2.Canny(blurred, 10, 200)
+#         output_q.put(wide)
 
 
 if __name__ == '__main__':
@@ -143,7 +144,7 @@ if __name__ == '__main__':
     #     ed_t.daemon = True
     #     ed_t.start()
 
-    ob_input_q = Queue(1)
+    ob_input_q = Queue(3)
     # fps is better if queue is higher but then more lags
     ob_output_q = Queue()
     for i in range(1):
@@ -155,16 +156,16 @@ if __name__ == '__main__':
     #                                   width=args.width,
     #                                   height=args.height).start()
 
-    video_capture = cv2.VideoCapture("http://192.168.0.9:8081/")
-    # video_capture = cv2.VideoCapture(0)
+    # video_capture = cv2.VideoCapture("http://192.168.43.59:8081/")
+    video_capture = cv2.VideoCapture(0)
     fps = FPS().start()
     detections = []
     while True:
         ret, frame = video_capture.read()
-        frame = imutils.rotate(frame, angle=270)
-        # frame = cv2.flip(frame, -1)  # to flip image on coorect orientation
-        # frame = cv2.flip(frame, 0)  # to flip image on coorect orientation
-        frame = cv2.flip(frame, 1)  # to flip image on coorect orientation
+        # frame = imutils.rotate(frame, angle=270)
+        # frame = cv2.flip(frame, -1)  # to flip image on corect orientation
+        # frame = cv2.flip(frame, 0)  # to flip image on corect orientation
+        frame = cv2.flip(frame, 1)  # to flip image on corect orientation
 
         frame = cv2.resize(frame, (args.width, args.height))
         # print(type(frame))
