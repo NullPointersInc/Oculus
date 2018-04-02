@@ -5,6 +5,15 @@ import os
 import argparse
 import sys
 
+status = False
+
+# def checkMethod(flag):
+#     """Method to check if object_detection is running or not."""
+#     if(flag is True):
+#         os.system("kill $!")
+#         flag = False
+#     return flag
+
 
 def on_connect(client, userdata, flags, rc):
     """on_connect is used to check connection to broker."""
@@ -20,29 +29,45 @@ def on_connect(client, userdata, flags, rc):
 
 def on_message(client, userdata, message):
     """Perform operations when message is received."""
+    global status
     op = str(message.payload.decode("utf-8"))
     print(op)
     if op == 'object':
-        os.system("sh run_detection.sh -o")
+        if(status is True):
+            os.system("pgrep -f 'python3 oculus.py' | xargs kill")
+        status = True
+        os.system("cd object_detection && python3 oculus.py &")
     elif op == 'currency':
+        if(status is True):
+            status = False
+            os.system("pgrep -f 'python3 oculus.py' | xargs kill")
         os.system(
             "sshpass -p 'bella12345' \
-             scp pi@192.168.0.9:~/image/image.jpg ./classify_note/")
-        os.system("sh run_detection.sh -n")
+             scp pi@192.168.43.59:~/image/image.jpg ./classify_note/")
+        os.system("cd classify_person && python3 classify.py image.jpg")
     elif op == 'face':
+        if(status is True):
+            status = False
+            os.system("pgrep -f 'python3 oculus.py' | xargs kill")
         os.system(
-            "sshpass -p 'bella12345' scp pi@192.168.0.9:~/image/image.jpg .")
-        os.system("mv image.jpg classify_person/")
-        os.system("sh run_detection.sh -p")
+            "sshpass -p 'bella12345' \
+            scp pi@192.168.43.59:~/image/image.jpg ./classify_person/")
+        os.system("cd classify_note && python3 classify.py image.jpg")
     elif op == 'prediction':
+        if(status is True):
+            status = False
+            os.system("pgrep -f 'python3 oculus.py' | xargs kill")
         os.system(
             "sshpass -p 'bella12345' \
-             scp pi@192.168.0.9:~/image/image.jpg ./im2txt/data")
-        os.system("sh run_detection.sh -l")
+             scp pi@192.168.43.59:~/image/image.jpg ./im2txt/data")
+        os.system("sh image_labelling.sh")
     elif op == 'ocr':
+        if(status is True):
+            status = False
+            os.system("pgrep -f 'python3 oculus.py' | xargs kill")
         os.system(
             "sshpass -p 'bella12345' \
-             scp pi@192.168.0.9:~/image/image.jpg ./OCR")
+             scp pi@192.168.43.59:~/image/image.jpg ./OCR")
         os.system("python3 OCR/ocr.py --image image.jpg")
     else:
         print("Pass")
