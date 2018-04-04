@@ -55,9 +55,9 @@ elif [ "$1" = "-l" ] || [ "$1" = "--label" ]; then
 			wget -O model.ckpt-2000000.index https://www.dropbox.com/s/nrk6vmtm5crw8p4/model.ckpt-2000000.index?dl=1
 			wget -O model.ckpt-2000000.meta https://www.dropbox.com/s/gt31hnfivnw8ak4/model.ckpt-2000000.meta?dl=1
 			wget -O word_counts.txt https://www.dropbox.com/s/fcsd0bg5o620fit/word_counts.txt?dl=1
+			echo "Retrained graph & Labels for labelling image downloaded successfully"
 		fi
 		cd ../..
-		echo "Retrained graph & Labels for labelling image downloaded successfully"
 
 elif [ "$1" = "-a" ] || [ "$1" = "--all" ]; then
 		# From Oculus/
@@ -99,16 +99,14 @@ elif [ "$1" = "-a" ] || [ "$1" = "--all" ]; then
 			mkdir model
 		fi
 		cd model
-		if [ -z "." ]; then
-			wget -O checkpoint https://www.dropbox.com/s/zcjrgxkyevwb7ak/checkpoint?dl=1
-			wget -O graph.pbtxt https://www.dropbox.com/s/pem4ivpsxw8zlbr/graph.pbtxt?dl=1
-			wget -O model.ckpt-2000000.data-00000-of-00001 https://www.dropbox.com/s/lar5zyhh6otd47l/model.ckpt-2000000.data-00000-of-00001?dl=1
-			wget -O model.ckpt-2000000.index https://www.dropbox.com/s/nrk6vmtm5crw8p4/model.ckpt-2000000.index?dl=1
-			wget -O model.ckpt-2000000.meta https://www.dropbox.com/s/gt31hnfivnw8ak4/model.ckpt-2000000.meta?dl=1
-			wget -O word_counts.txt https://www.dropbox.com/s/fcsd0bg5o620fit/word_counts.txt?dl=1
-		fi
-		cd ../..
+		wget -O checkpoint https://www.dropbox.com/s/zcjrgxkyevwb7ak/checkpoint?dl=1
+		wget -O graph.pbtxt https://www.dropbox.com/s/pem4ivpsxw8zlbr/graph.pbtxt?dl=1
+		wget -O model.ckpt-2000000.data-00000-of-00001 https://www.dropbox.com/s/lar5zyhh6otd47l/model.ckpt-2000000.data-00000-of-00001?dl=1
+		wget -O model.ckpt-2000000.index https://www.dropbox.com/s/nrk6vmtm5crw8p4/model.ckpt-2000000.index?dl=1
+		wget -O model.ckpt-2000000.meta https://www.dropbox.com/s/gt31hnfivnw8ak4/model.ckpt-2000000.meta?dl=1
+		wget -O word_counts.txt https://www.dropbox.com/s/fcsd0bg5o620fit/word_counts.txt?dl=1
 		echo "Retrained graph & Labels for labelling image downloaded successfully"
+		cd ../..
 
 elif [ "$1" = "-h" ] || [ "$1" = "--help" ]; then
 		echo "Usage: sh pull_graph.sh -option"
