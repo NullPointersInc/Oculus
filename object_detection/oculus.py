@@ -104,7 +104,10 @@ def detect(input_q, output_q):
             od_graph_def.ParseFromString(serialized_graph)
             tf.import_graph_def(od_graph_def, name='')
 
-        sess = tf.Session(graph=detection_graph)
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.75)
+        sess = tf.Session(graph=detection_graph,
+                          config=tf.ConfigProto(gpu_options=gpu_options,
+                                                log_device_placement=False))
     fps = FPS().start()
     while True:
         fram = input_q.get()
