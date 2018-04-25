@@ -23,7 +23,7 @@ elif [ "$1" = "-p" ] || [ "$1" = "--person" ]; then
 			wget -O retrained_graph.pb https://www.dropbox.com/s/xcfgw7qb42npwld/retrained_graph.pb?dl=1
 			echo "Retrained Graph for classifying person downloaded successfully."
 		fi
-		if [ ! -e retrained_graph.pb ]; then
+		if [ ! -e retrained_labels.txt ]; then
 			wget -O retrained_labels.txt https://www.dropbox.com/s/6hks023tcws5hzd/retrained_labels.txt?dl=1
 			echo "Retrained Labels for classifying person downloaded successfully."
 		fi
@@ -77,7 +77,7 @@ elif [ "$1" = "-a" ] || [ "$1" = "--all" ]; then
 			wget -O retrained_graph.pb https://www.dropbox.com/s/xcfgw7qb42npwld/retrained_graph.pb?dl=1
 			echo "Retrained Graph for classifying person downloaded successfully."
 		fi
-		if [ ! -e retrained_graph.pb ]; then
+		if [ ! -e retrained_labels.txt ]; then
 			wget -O retrained_labels.txt https://www.dropbox.com/s/6hks023tcws5hzd/retrained_labels.txt?dl=1
 			echo "Retrained Labels for classifying person downloaded successfully."
 		fi
