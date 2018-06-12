@@ -5,6 +5,9 @@ import pytesseract
 import argparse
 import cv2
 import os
+from autocorrect import spell
+import re
+
 
 # construct the argument parse and parse the arguments
 ap = argparse.ArgumentParser()
@@ -51,7 +54,8 @@ else:
 center = (w // 2, h // 2)
 M = cv2.getRotationMatrix2D(center, angle, 1.0)
 rotated = cv2.warpAffine(image, M, (w, h),
-                         flags=cv2.INTER_CUBIC, borderMode=cv2.BORDER_REPLICATE)
+                         flags=cv2.INTER_CUBIC,
+                         borderMode=cv2.BORDER_REPLICATE)
 
 # # draw the correction angle on the image so we can validate it
 # cv2.putText(rotated, "Angle: {:.2f} degrees".format(angle),
@@ -78,6 +82,9 @@ if args["preprocess"] == "thresh":
 elif args["preprocess"] == "blur":
     gray = cv2.medianBlur(gray, 3)
 
+elif args["preprocess"] == "none":
+    pass
+
 # write the grayscale image to disk as a temporary file so we can
 # apply OCR to it
 filename = "{}.png".format(os.getpid())
@@ -86,8 +93,14 @@ cv2.imwrite(filename, gray)
 # the temporary file
 text = pytesseract.image_to_string(Image.open(filename))
 os.remove(filename)
-cmd = """google_speech -l en " """ + text + str('"')
-print(cmd)
+# words = re.split(r'[\n,.\- ]', text)
+# for word in words:
+#
+# print()
+
+# cmd = """google_speech -l en " """ + text + str('"')
+cmd = "say " + '"' + text + '"'
+# print(cmd)
 os.system(cmd)
 
 # show the output images
