@@ -5,7 +5,7 @@ cycler==0.10.0
 gast==0.2.0
 grpcio==1.9.1
 google_speech
-html5lib==0.9999999
+html5lib==0.99999999
 imutils==0.4.5
 Markdown==2.6.11
 matplotlib==2.1.2
